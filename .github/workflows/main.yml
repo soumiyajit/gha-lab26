@@ -25,4 +25,4 @@ jobs:
         run: node .github/actions/secret-scanner/index.js
         env:
           # GitHub Actions inputs are just environment variables prefixed with INPUT_
-          INPUT_SEARCH_PATH: 'backend/config'
+          INPUT_SEARCH_PATH: 'backend/src/config'
