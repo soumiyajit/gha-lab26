@@ -1,15 +1,43 @@
 name: Synapse Non-Docker CI
-on: [push]
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  security-check:
+  security-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      # 1. Pull the code into the runner
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # 2. Setup Node.js (Required to run npm commands)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # 3. Install dependencies for the Custom Action
+      # This fixes the "Module Not Found" error
+      - name: Install Custom Action Dependencies
+        run: npm install
+        working-directory: .github/actions/secret-scanner
+
+      # 4. Run your Custom Action
       - name: Run Secret Scanner
-        # This points to the local folder where your action lives
         uses: ./.github/actions/secret-scanner
         with:
           search_path: 'backend/config'
+
+      # 5. Continue with normal application steps (Testing the Backend)
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: backend
+
+      - name: Run Backend Tests
+        run: npm test
+        working-directory: backend
