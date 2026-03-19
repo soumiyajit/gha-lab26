@@ -4,7 +4,7 @@ inputs:
   search_path:
     description: 'The directory to scan'
     required: true
-    default: 'backend/config'
+    default: 'backend/src/config'
 runs:
   using: 'node20'
   main: 'index.js'
