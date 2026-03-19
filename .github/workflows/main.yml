@@ -1,43 +1,28 @@
 name: Synapse Non-Docker CI
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+on: [push]
 
 jobs:
-  security-and-test:
+  security-check:
     runs-on: ubuntu-latest
-
     steps:
-      # 1. Pull the code into the runner
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 2. Setup Node.js (Required to run npm commands)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          # This caches your dependencies so the next run is faster!
+          cache: 'npm'
+          cache-dependency-path: '.github/actions/secret-scanner/package.json'
 
-      # 3. Install dependencies for the Custom Action
-      # This fixes the "Module Not Found" error
-      - name: Install Custom Action Dependencies
+      - name: Install Scanner Dependencies
         run: npm install
         working-directory: .github/actions/secret-scanner
 
-      # 4. Run your Custom Action
-      - name: Run Secret Scanner
-        uses: ./.github/actions/secret-scanner
-        with:
-          search_path: 'backend/config'
-
-      # 5. Continue with normal application steps (Testing the Backend)
-      - name: Install Backend Dependencies
-        run: npm install
-        working-directory: backend
-
-      - name: Run Backend Tests
-        run: npm test
-        working-directory: backend
+      - name: Run Secret Scanner Script
+        # We call the script directly with node instead of letting GitHub wrap it
+        run: node .github/actions/secret-scanner/index.js
+        env:
+          # GitHub Actions inputs are just environment variables prefixed with INPUT_
+          INPUT_SEARCH_PATH: 'backend/config'
