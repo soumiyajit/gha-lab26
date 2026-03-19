@@ -1,0 +1,10 @@
+name: 'Synapse Secret Scanner'
+description: 'Scans backend config files for hardcoded MongoDB credentials'
+inputs:
+  search_path:
+    description: 'The directory to scan'
+    required: true
+    default: 'backend/config'
+runs:
+  using: 'node20'
+  main: 'index.js'
