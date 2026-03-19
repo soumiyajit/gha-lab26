@@ -1,4 +1,4 @@
-name: Synapse Non-Docker CI
+name: Custom Action Security
 on: [push]
 
 jobs:
